@@ -5,7 +5,9 @@ const jwt = require('jsonwebtoken')
 async function registerUser(req, res) {
     try {
         const SALT_ROUNDS = 12;
-        const { name, email, password } = req.body;
+        const { name, email, password,
+            //  role 
+            } = req.body;
         if (!name || !email || !password) return res.status(400).json({ message: 'Missing fields' });
 
         const existing = await User.findOne({ email });
@@ -13,7 +15,9 @@ async function registerUser(req, res) {
 
 
         const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
-        const user = new User({ name, email, password:passwordHash, role  });
+        const user = new User({ name, email, password:passwordHash, 
+            // role  
+        });
 
         await user.save();
 
@@ -23,7 +27,7 @@ async function registerUser(req, res) {
                 id: user.id,
                 name: user.name,
                 email: user.email,
-                role: user.role,
+                // role: user.role,
             }
         })
     } 

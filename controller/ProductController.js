@@ -47,7 +47,7 @@ const addProduct = async (req, res) => {
         if(!req.files || req.files.length == 0){
             return res.status(400).json({ message: "Images are required" })
         }
-        const filePath = req.files.map(file => file.path);
+        const filePath = req.files.map(file => `/uploads/products/${file.filename}`);
 
         const product = new Product({ name, description, price, image:filePath });
         await product.save();
