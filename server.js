@@ -19,7 +19,7 @@ connectDB();
 app.use(express.json());
 const PORT = process.env.PORT;
 
-app.use('/', UserRoute)
+app.use('/user', UserRoute)
 app.use('/social',authRoute)
 app.use('/products', ProductRouter)
 app.use('/orders', OrderRouter)
