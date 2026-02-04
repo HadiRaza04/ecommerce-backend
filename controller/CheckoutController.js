@@ -26,8 +26,10 @@ const Checkout = async (req, res) => {
             payment_method_types: ["card"],
             line_items: lineItems,
             mode: 'payment',
+            // success_url: "",
             success_url: "http://localhost:5173/success",
             cancel_url: "http://localhost:5173/cancel",
+            // cancel_url: "",
             customer_email: req.user.email, 
         });
 

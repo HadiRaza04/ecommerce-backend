@@ -62,20 +62,19 @@ const addProduct = async (req, res) => {
 const updateProduct = async (req, res) => {
     try {
         const { id } = req.params;
-        const filePath = req.file.path;
 
-        // if(!product) res.status(404).json({success: false, message: "Product not found"})
+        const existingProduct = await Product.findById(id);
+        if (!existingProduct) return res.status(404).json({ message: "Not found" });
 
         const { name, description, price } = req.body;
+        let imageArray = existingProduct.image;
+        if (req.files && req.files.length > 0) {
+            imageArray = req.files.map(file => `/uploads/products/${file.filename}`);
+        }
 
         const product = await Product.findByIdAndUpdate(
             id, 
-            {
-                name,
-                description,
-                price,
-                image: filePath
-            }, 
+            { name, description, price, image: imageArray }, 
             {
                 new: true, 
                 runValidators: true 
@@ -90,6 +89,7 @@ const updateProduct = async (req, res) => {
 
         res.status(200).json({
             success: true,
+            message: "Product updated successfully",
             data: product,
         });
     } 
