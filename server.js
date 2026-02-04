@@ -24,6 +24,10 @@ app.use('/social',authRoute)
 app.use('/products', ProductRouter)
 app.use('/orders', OrderRouter)
 
+app.get('/', (req, res) => {
+  res.send('Server is running!')
+})
+
 app.listen(PORT, () => {
     console.log("Server listen on port", PORT)
 })
