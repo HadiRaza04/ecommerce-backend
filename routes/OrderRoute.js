@@ -2,7 +2,7 @@ const express = require('express');
 const protect = require('../middleware/auth');
 const authorize = require('../middleware/role');
 const upload = require('../middleware/upload');
-const { getAllOrders, updateStatus } = require('../controller/OrderController');
+const { getAllOrders, updateStatus } = require('../controller/orderController');
 
 const OrderRouter = express.Router();
 

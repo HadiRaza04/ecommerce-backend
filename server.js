@@ -5,6 +5,8 @@ const UserRoute = require('./routes/UserRoute');
 const connectDB = require('./config/db');
 const ProductRouter = require('./routes/ProductRoute');
 const OrderRouter = require('./routes/OrderRoute');
+const authRoute = require('./routes/googleRouter');
+
 
 const app = express();
 app.use(cors('*'))
@@ -18,6 +20,7 @@ app.use(express.json());
 const PORT = process.env.PORT;
 
 app.use('/', UserRoute)
+app.use('/social',authRoute)
 app.use('/products', ProductRouter)
 app.use('/orders', OrderRouter)
 
