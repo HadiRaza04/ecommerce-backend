@@ -1,5 +1,5 @@
 const express = require('express');
-const { getAllProducts, addProduct, getSingleProduct, updateProduct, deleteProduct } = require('../controller/ProductController');
+const { getAllProducts, addProduct, getSingleProduct, updateProduct, deleteProduct } = require('../controller/productController');
 const protect = require('../middleware/auth');
 const authorize = require('../middleware/role');
 const upload = require('../middleware/upload')

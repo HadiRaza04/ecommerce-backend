@@ -1,7 +1,7 @@
 const express = require('express');
 const { registerUser, login } = require('../controller/userController');
-const { googleAuth } = require('../controller/authController');
-const Checkout = require('../controller/CheckoutController');
+const { googleAuth } = require('../controller/authController.js');
+const Checkout = require('../controller/checkoutController');
 const authorize = require('../middleware/role');
 const protect = require('../middleware/auth');
 
