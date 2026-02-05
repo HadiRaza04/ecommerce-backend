@@ -7,6 +7,9 @@ const protect = require('../middleware/auth');
 
 const UserRoute = express.Router();
 
+UserRoute.get('/', (req, res) => {
+    res.send('Server is running!')
+});
 UserRoute.post('/signup', registerUser);
 UserRoute.post('/login', login);
 UserRoute.post("/google", googleAuth);
