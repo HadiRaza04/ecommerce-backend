@@ -2,6 +2,63 @@ const Cart = require('../models/CartModel');
 
 // @desc    Add item to cart or increment quantity
 // @route   POST /api/cart/add
+
+// TOGGLE CART
+exports.toggleCart = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const { productId } = req.params;
+
+        // 1. Find the user's cart
+        let cart = await Cart.findOne({ user: userId });
+
+        // 2. If no cart exists, create one with the item
+        if (!cart) {
+            cart = await Cart.create({
+                user: userId,
+                items: [{ product: productId, quantity: 1 }]
+            });
+            return res.status(201).json({ 
+                message: "Product added to cart", 
+                isInCart: true 
+            });
+        }
+
+        // 3. Check if the product already exists in the items array
+        // We use .some() and .equals() because product is an ObjectId
+        const itemIndex = cart.items.findIndex(item => 
+            item.product.toString() === productId
+        );
+
+        if (itemIndex > -1) {
+            // Product exists: Remove it (Toggle OFF)
+            await Cart.findOneAndUpdate(
+                { user: userId },
+                { $pull: { items: { product: productId } } },
+                { new: true }
+            );
+            res.status(200).json({ 
+                message: "Removed from cart", 
+                isInCart: false 
+            });
+        } else {
+            // Product doesn't exist: Add it (Toggle ON)
+            await Cart.findOneAndUpdate(
+                { user: userId },
+                { $push: { items: { product: productId, quantity: 1 } } },
+                { new: true }
+            );
+            res.status(200).json({ 
+                message: "Added to cart", 
+                isInCart: true 
+            });
+        }
+
+    } catch (error) {
+        res.status(500).json({ message: "Server Error", error: error.message });
+    }
+};
+
 exports.addToCart = async (req, res) => {
     try {
         const userId = req.user.id;
