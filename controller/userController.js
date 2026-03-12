@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const Favourite = require('../models/FavouriteModel');
 const Product = require('../models/ProductModel');
+const { createWallet } = require('./WalletController');
 
 async function registerUser(req, res) {
     try {
@@ -54,6 +55,7 @@ async function login(req, res) {
             process.env.JWT_Secret, 
             {expiresIn: process.env.JWT_EXPIRES_IN}
         )
+        await createWallet(user._id);
         return res.json({
             message: "Login success",
             token,

@@ -7,6 +7,7 @@ const ProductRouter = require('./routes/ProductRoute');
 const OrderRouter = require('./routes/OrderRoute');
 const FavRouter = require('./routes/FavouriteRoute');
 const CartRouter = require('./routes/CartRoute');
+const WalletRouter = require('./routes/WalletRoute');
 // const mongoose = require('mongoose');
 
 const app = express();
@@ -46,6 +47,7 @@ app.use('/products', ProductRouter)
 app.use('/orders', OrderRouter)
 app.use('/favourite', FavRouter)
 app.use('/cart', CartRouter)
+app.use('/wallet', WalletRouter)
 
 
 
