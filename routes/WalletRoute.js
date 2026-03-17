@@ -1,13 +1,16 @@
-const express = require('express');
+import express from 'express';
+import { addFunds, getWallet, decreaseFunds, getAllWallets } from '../controller/WalletController.js';
+import protect from '../middleware/auth.js';
+import authorize from '../middleware/role.js';
+
 const WalletRouter = express.Router();
-const { addFunds, getWallet } = require('../controller/WalletController');
-const protect = require('../middleware/auth'); // Adjust paths as needed
-const authorize = require('../middleware/role'); // Adjust paths as needed
 
 // User can view their own wallet
 WalletRouter.get('/', protect, getWallet);
+WalletRouter.post('/decrease', protect, decreaseFunds);
 
 // ONLY Admin can add funds
 WalletRouter.post('/', protect, authorize("admin"), addFunds);
+WalletRouter.get('/allwallets', protect, authorize("admin"), getAllWallets);
 
-module.exports = WalletRouter;
+export default WalletRouter;

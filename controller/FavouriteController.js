@@ -1,6 +1,7 @@
-const Favorite = require('../models/FavouriteModel');
+import Favorite from '../models/FavouriteModel.js';
 
-exports.toggleFavorite = async (req, res) => {
+// @desc    Toggle favorite (Add if absent, Remove if present)
+export const toggleFavorite = async (req, res) => {
     try {
         const userId = req.user.id;
         const { productId } = req.params;
@@ -41,7 +42,8 @@ exports.toggleFavorite = async (req, res) => {
     }
 };
 
-exports.getUserFavorites = async (req, res) => {
+// @desc    Get all user favorites
+export const getUserFavorites = async (req, res) => {
     try {
         // Populate the products array to get full details
         const favorites = await Favorite.findOne({ user: req.user.id }).populate('products');

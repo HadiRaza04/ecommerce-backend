@@ -1,8 +1,10 @@
-const { OAuth2Client } = require("google-auth-library");
-const jwt = require("jsonwebtoken");
-const User = require("../models/UserModel");
+import { OAuth2Client } from "google-auth-library";
+import jwt from "jsonwebtoken";
+import User from "../models/UserModel.js";
+import { GOOGLE_CLIENT_ID } from '../env.js';
 
-const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+
+const client = new OAuth2Client(GOOGLE_CLIENT_ID);
 
 async function googleAuth(req, res) {
   try {
@@ -14,7 +16,7 @@ async function googleAuth(req, res) {
 
     const ticket = await client.verifyIdToken({
       idToken: token,
-      audience: process.env.GOOGLE_CLIENT_ID,
+      audience: GOOGLE_CLIENT_ID,
     });
 
     const payload = ticket.getPayload();
@@ -57,4 +59,4 @@ async function googleAuth(req, res) {
   }
 }
 
-module.exports = { googleAuth };
+export default googleAuth;

@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const CartSchema = new mongoose.Schema({
     user: {
@@ -22,4 +22,5 @@ const CartSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 const Cart = mongoose.model("Cart", CartSchema);
-module.exports = Cart;
+
+export default Cart;

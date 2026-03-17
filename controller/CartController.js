@@ -1,10 +1,8 @@
-const Cart = require('../models/CartModel');
+import Cart from '../models/CartModel.js';
 
-// @desc    Add item to cart or increment quantity
-// @route   POST /api/cart/add
-
-// TOGGLE CART
-exports.toggleCart = async (req, res) => {
+// @desc    Toggle item in cart (Add if missing, Remove if exists)
+// @route   POST /api/cart/toggle/:productId
+export const toggleCart = async (req, res) => {
     try {
         const userId = req.user.id;
         const { productId } = req.params;
@@ -25,7 +23,6 @@ exports.toggleCart = async (req, res) => {
         }
 
         // 3. Check if the product already exists in the items array
-        // We use .some() and .equals() because product is an ObjectId
         const itemIndex = cart.items.findIndex(item => 
             item.product.toString() === productId
         );
@@ -53,13 +50,14 @@ exports.toggleCart = async (req, res) => {
                 isInCart: true 
             });
         }
-
     } catch (error) {
         res.status(500).json({ message: "Server Error", error: error.message });
     }
 };
 
-exports.addToCart = async (req, res) => {
+// @desc    Add item to cart or increment quantity
+// @route   POST /api/cart/add
+export const addToCart = async (req, res) => {
     try {
         const userId = req.user.id;
         const { productId } = req.body;
@@ -67,20 +65,16 @@ exports.addToCart = async (req, res) => {
         let cart = await Cart.findOne({ user: userId });
 
         if (!cart) {
-            // Create new cart if it doesn't exist
             cart = await Cart.create({
                 user: userId,
                 items: [{ product: productId, quantity: 1 }]
             });
         } else {
-            // Check if product already exists in cart
             const itemIndex = cart.items.findIndex(item => item.product.toString() === productId);
 
             if (itemIndex > -1) {
-                // If exists, increment quantity
                 cart.items[itemIndex].quantity += 1;
             } else {
-                // If not, push new item
                 cart.items.push({ product: productId, quantity: 1 });
             }
             await cart.save();
@@ -92,11 +86,9 @@ exports.addToCart = async (req, res) => {
     }
 };
 
-// @desc    Decrease quantity or remove if quantity is 1
-// @route   POST /api/cart/decrease
 // @desc    Increase quantity of an existing item in cart
 // @route   POST /api/cart/increase
-exports.increaseQuantity = async (req, res) => {
+export const increaseQuantity = async (req, res) => {
     try {
         const { productId } = req.body;
         const cart = await Cart.findOne({ user: req.user.id });
@@ -106,14 +98,10 @@ exports.increaseQuantity = async (req, res) => {
         const itemIndex = cart.items.findIndex(item => item.product.toString() === productId);
 
         if (itemIndex > -1) {
-            // Increment quantity
             cart.items[itemIndex].quantity += 1;
-            
             await cart.save();
             
-            // Populate product details so frontend doesn't break
             const updatedCart = await Cart.findById(cart._id).populate('items.product');
-            
             res.status(200).json({ message: "Quantity increased", data: updatedCart });
         } else {
             res.status(404).json({ message: "Product not in cart" });
@@ -123,8 +111,9 @@ exports.increaseQuantity = async (req, res) => {
     }
 };
 
-// @desc    Updated Decrease logic with Population
-exports.decreaseQuantity = async (req, res) => {
+// @desc    Decrease quantity or remove if quantity is 1
+// @route   POST /api/cart/decrease
+export const decreaseQuantity = async (req, res) => {
     try {
         const { productId } = req.body;
         const cart = await Cart.findOne({ user: req.user.id });
@@ -141,10 +130,7 @@ exports.decreaseQuantity = async (req, res) => {
             }
             
             await cart.save();
-            
-            // Populate so the frontend gets full product info back
             const updatedCart = await Cart.findById(cart._id).populate('items.product');
-            
             res.status(200).json({ message: "Quantity decreased", data: updatedCart });
         } else {
             res.status(404).json({ message: "Product not in cart" });
@@ -156,7 +142,7 @@ exports.decreaseQuantity = async (req, res) => {
 
 // @desc    Get user cart
 // @route   GET /api/cart
-exports.getCart = async (req, res) => {
+export const getCart = async (req, res) => {
     try {
         const cart = await Cart.findOne({ user: req.user.id }).populate('items.product');
         res.status(200).json(cart || { items: [] });
@@ -167,9 +153,9 @@ exports.getCart = async (req, res) => {
 
 // @desc    Remove product entirely from cart
 // @route   DELETE /api/cart/remove/:productId
-exports.deleteFromCart = async (req, res) => {
+export const deleteFromCart = async (req, res) => {
     try {
-        const { productId } = req.params; // Using params is standard for DELETE
+        const { productId } = req.params;
         const userId = req.user.id;
 
         const cart = await Cart.findOneAndUpdate(

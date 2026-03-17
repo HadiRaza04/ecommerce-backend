@@ -1,6 +1,8 @@
-const Order = require('../models/OrderModel')
+import Order from '../models/OrderModel.js';
 
-const getAllOrders = async (req, res) => {
+// @desc    Get all orders
+// @route   GET /api/orders
+export const getAllOrders = async (req, res) => {
     try {
         const orders = await Order.find();
         res.status(200).json({
@@ -15,9 +17,11 @@ const getAllOrders = async (req, res) => {
             error: error.message,
         });
     }
-}
+};
 
-const updateStatus = async (req, res) => {
+// @desc    Update order status
+// @route   PUT /api/orders/status
+export const updateStatus = async (req, res) => {
     try {
         const { orderId, status } = req.body;
 
@@ -42,4 +46,3 @@ const updateStatus = async (req, res) => {
         res.status(500).json({ success: false, error: error.message });
     }
 };
-module.exports = {getAllOrders, updateStatus}

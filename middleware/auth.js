@@ -1,5 +1,7 @@
-const jwt = require("jsonwebtoken");
-const User = require("../models/UserModel");
+import jwt from "jsonwebtoken";
+import User from "../models/UserModel.js";
+import { JWT_Secret } from '../env.js';
+
 
 const protect = async (req, res, next) => {
   try {
@@ -9,7 +11,7 @@ const protect = async (req, res, next) => {
       return res.status(401).json({ message: "Not authorized" });
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(token, JWT_Secret);
 
     req.user = await User.findById(decoded.id).select("-password");
 
@@ -19,4 +21,4 @@ const protect = async (req, res, next) => {
   }
 };
 
-module.exports = protect;
+export default protect;

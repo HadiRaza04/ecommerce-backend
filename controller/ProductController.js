@@ -1,8 +1,13 @@
-const Product = require('../models/ProductModel');
-const path = require('path')
-const fs = require('fs')
+import Product from '../models/ProductModel.js';
+import path from 'path';
+import fs from 'fs';
+import { fileURLToPath } from 'url';
 
-const getAllProducts = async (req, res) => {
+// Replicating __dirname for ES Modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+export const getAllProducts = async (req, res) => {
     try {
         const products = await Product.find();
         res.status(200).json({
@@ -10,15 +15,15 @@ const getAllProducts = async (req, res) => {
             count: products.length,
             data: products,
         });
-    } 
-    catch (error) {
+    } catch (error) {
         res.status(500).json({
             success: false,
             error: error.message,
         });
     }
-}
-const getSingleProduct = async (req, res) => {
+};
+
+export const getSingleProduct = async (req, res) => {
     try {
         const { id } = req.params;
         const product = await Product.findById(id);
@@ -33,33 +38,34 @@ const getSingleProduct = async (req, res) => {
             success: true,
             data: product,
         });
-    }
-    catch (error) {
+    } catch (error) {
         res.status(400).json({
             success: false,
             error: error.message,
         });
     }
-}
-const addProduct = async (req, res) => {
+};
+
+export const addProduct = async (req, res) => {
     try {
-        const {name, description, price} = req.body;
-        if(!req.files || req.files.length == 0){
-            return res.status(400).json({ message: "Images are required" })
+        const { name, description, price } = req.body;
+        if (!req.files || req.files.length === 0) {
+            return res.status(400).json({ message: "Images are required" });
         }
         const filePath = req.files.map(file => `/uploads/products/${file.filename}`);
 
-        const product = new Product({ name, description, price, image:filePath });
+        const product = new Product({ name, description, price, image: filePath });
         await product.save();
         return res.status(201).json({
             success: true,
             data: product,
         });
     } catch (error) {
-        res.status(400).json({ success: false, "message": error.message })
+        res.status(400).json({ success: false, message: error.message });
     }
-}
-const updateProduct = async (req, res) => {
+};
+
+export const updateProduct = async (req, res) => {
     try {
         const { id } = req.params;
 
@@ -73,11 +79,11 @@ const updateProduct = async (req, res) => {
         }
 
         const product = await Product.findByIdAndUpdate(
-            id, 
-            { name, description, price, image: imageArray }, 
+            id,
+            { name, description, price, image: imageArray },
             {
-                new: true, 
-                runValidators: true 
+                new: true,
+                runValidators: true
             }
         );
         if (!product) {
@@ -92,18 +98,18 @@ const updateProduct = async (req, res) => {
             message: "Product updated successfully",
             data: product,
         });
-    } 
-    catch (error) {
+    } catch (error) {
         res.status(400).json({
             error: error.message
-        })
+        });
     }
-}
-const deleteProduct = async (req, res) => {
+};
+
+export const deleteProduct = async (req, res) => {
     try {
         const { id } = req.params;
         const product = await Product.findById(id);
-        if(!product) return res.status(404).json({ message: "Product not found"})
+        if (!product) return res.status(404).json({ message: "Product not found" });
 
         if (Array.isArray(product.image)) {
             product.image.forEach((img) => {
@@ -114,13 +120,12 @@ const deleteProduct = async (req, res) => {
                 }
             });
         }
-        await Product.findByIdAndDelete(id)
-        res.status(200).json({ message: "Product and image deleted success" })
+        await Product.findByIdAndDelete(id);
+        res.status(200).json({ message: "Product and image deleted success" });
     } catch (error) {
         res.status(400).json({
             success: false,
             error: error.message
-        })
+        });
     }
-}
-module.exports = {getAllProducts, addProduct, getSingleProduct, updateProduct, deleteProduct}
+};

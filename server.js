@@ -1,58 +1,35 @@
-const express = require('express');
-const cors = require('cors');
-require('dotenv').config();
-const UserRoute = require('./routes/UserRoute');
-const connectDB = require('./config/db');
-const ProductRouter = require('./routes/ProductRoute');
-const OrderRouter = require('./routes/OrderRoute');
-const FavRouter = require('./routes/FavouriteRoute');
-const CartRouter = require('./routes/CartRoute');
-const WalletRouter = require('./routes/WalletRoute');
-// const mongoose = require('mongoose');
+import express from 'express';
+import cors from 'cors';
+import 'dotenv/config'; // Shortcut for require('dotenv').config() in ESM
+import UserRoute from './routes/UserRoute.js';
+import connectDB from './config/db.js';
+import ProductRouter from './routes/ProductRoute.js';
+import OrderRouter from './routes/OrderRoute.js';
+import FavRouter from './routes/FavouriteRoute.js';
+import CartRouter from './routes/CartRoute.js';
+import WalletRouter from './routes/WalletRoute.js';
+import { PORT } from './env.js';
 
 const app = express();
-app.use(cors('*'))
-app.use("/uploads", express.static("./uploads"));
-// app.use(cors({
-//   origin: "http://localhost:5173",
-//   credentials: true,
-// }));
 
-// let isConnected = false;
-// const connectToMongoDB = async () => {
-//   try {
-//     await mongoose.connect(process.env.mongoDB_URI, {
-//       useNewUrlParser: true,
-//       useUnifiedTopology: true
-//     });
-//     isConnected = true;
-//     console.log("MongoDB connected.")
-//   } catch (error) {
-//     console.log("Error: ", error)
-//   }
-// }
-let isConnected = false;
+// Database Connection
 connectDB();
-app.use((req, res, next) => {
-  if(!isConnected) {
-    connectDB();
-    isConnected = true;
-  }
-  next();
-})
+
+// Middlewares
+app.use(cors('*'));
+app.use("/uploads", express.static("./uploads"));
 app.use(express.json());
 
-app.use('/', UserRoute)
-app.use('/products', ProductRouter)
-app.use('/orders', OrderRouter)
-app.use('/favourite', FavRouter)
-app.use('/cart', CartRouter)
-app.use('/wallet', WalletRouter)
+// Routes
+app.use('/', UserRoute);
+app.use('/products', ProductRouter);
+app.use('/orders', OrderRouter);
+app.use('/favourite', FavRouter);
+app.use('/cart', CartRouter);
+app.use('/wallet', WalletRouter);
 
-
-
-const PORT = process.env.PORT;
 app.listen(PORT, () => {
-    console.log("Server listen on port", PORT)
-})
-// module.exports = app;
+    console.log(`Server listening on port ${PORT}`);
+});
+
+export default app;
