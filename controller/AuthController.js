@@ -1,7 +1,7 @@
 import { OAuth2Client } from "google-auth-library";
 import jwt from "jsonwebtoken";
 import User from "../models/UserModel.js";
-import { GOOGLE_CLIENT_ID } from '../env.js';
+import { GOOGLE_CLIENT_ID, JWT_SECRET } from '../env.js';
 
 
 const client = new OAuth2Client(GOOGLE_CLIENT_ID);
@@ -36,7 +36,7 @@ async function googleAuth(req, res) {
 
     const jwtToken = jwt.sign(
       { id: user._id, role: user.role },
-      process.env.JWT_SECRET,
+      JWT_SECRET,
       { expiresIn: "7d" }
     );
 
